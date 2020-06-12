@@ -7,8 +7,7 @@
 
 #include "logger/logger.h"
 
-SdFatSdioEX sd;
-Logger<200> datalog(&sd);
+Logger<200> datalog;
 
 unsigned int counter = 0;
 
@@ -22,7 +21,6 @@ int main() {
   Serial.begin(115200);
   while(!Serial){}
   Serial.println("Begin test v2");
-  sd.begin();
   if (!datalog.Init("test_data")) {
     Serial.println("FAILED TO INIT");
   } else {

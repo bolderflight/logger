@@ -17,20 +17,20 @@
 template<unsigned int FIFO_DEPTH>
 class Logger {
  public:
-  explicit Logger(class SdFatSdioEX *sd_ptr) {
-    sd_ptr_ = sd_ptr;
-  }
   bool Init(std::string file_name) {
     unsigned int counter = 0;
     std::string log_name = file_name + std::to_string(counter) + LOG_EXT_;
-    while ((sd_ptr_->exists(log_name.c_str())) && (counter < std::numeric_limits<unsigned int>::max())) {
+    if (!sd_.begin()) {
+      return false;
+    }
+    while ((sd_.exists(log_name.c_str())) && (counter < std::numeric_limits<unsigned int>::max())) {
       counter++;
       log_name = file_name + std::to_string(counter) + LOG_EXT_;
     }
-    if (sd_ptr_->exists(log_name.c_str())) {
+    if (sd_.exists(log_name.c_str())) {
       return false;
     }
-    file_ = sd_ptr_->open(log_name, O_RDWR | O_CREAT);
+    file_ = sd_.open(log_name, O_RDWR | O_CREAT);
     if (!file_) {
       return false;
     }
@@ -57,7 +57,9 @@ class Logger {
       file_.sync();
     }
   }
-  void Close();
+  void Close() {
+
+  }
 
  private:
   /* Types */
@@ -70,7 +72,7 @@ class Logger {
     TYPE_TEMPERATURE
   };
   /* SD card */
-  SdFatSdioEX *sd_ptr_;
+  SdFatSdioEX sd_;
   /* SD file */
   File file_;
   /* Log extension */
