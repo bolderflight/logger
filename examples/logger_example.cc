@@ -7,7 +7,9 @@
 
 #include "logger/logger.h"
 
-Logger<200> datalog;
+SdFatSdioEX sd;
+
+Logger<200> datalog(&sd);
 
 unsigned int counter = 0;
 

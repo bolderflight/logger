@@ -8,29 +8,30 @@
 #ifndef INCLUDE_LOGGER_LOGGER_H_
 #define INCLUDE_LOGGER_LOGGER_H_
 
+#include <cstdint>
 #include <string>
 #include <atomic>
 #include <limits>
 #include "sd/SdFat.h"
 #include "circle_buf/circle_buf.h"
 
-template<unsigned int FIFO_DEPTH>
+template<std::size_t FIFO_DEPTH>
 class Logger {
  public:
+  Logger(SdFatSdioEX *sd) {
+    sd_ = sd;
+  }
   bool Init(std::string file_name) {
-    unsigned int counter = 0;
+    std::size_t counter = 0;
     std::string log_name = file_name + std::to_string(counter) + LOG_EXT_;
-    if (!sd_.begin()) {
-      return false;
-    }
-    while ((sd_.exists(log_name.c_str())) && (counter < std::numeric_limits<unsigned int>::max())) {
+    while ((sd_->exists(log_name.c_str())) && (counter < std::numeric_limits<std::size_t>::max())) {
       counter++;
       log_name = file_name + std::to_string(counter) + LOG_EXT_;
     }
-    if (sd_.exists(log_name.c_str())) {
+    if (sd_->exists(log_name.c_str())) {
       return false;
     }
-    file_ = sd_.open(log_name, O_RDWR | O_CREAT);
+    file_ = sd_->open(log_name, O_RDWR | O_CREAT);
     if (!file_) {
       return false;
     }
@@ -58,21 +59,36 @@ class Logger {
     }
   }
   void Close() {
-
+    /* Write any logs still in the buffer */
+    atomic_signal_fence(std::memory_order_acq_rel);
+    unsigned int size = fifo_buffer_.Size();
+    atomic_signal_fence(std::memory_order_acq_rel);
+    while (size >= BLOCK_DIM_) {
+      Flush();
+      atomic_signal_fence(std::memory_order_acq_rel);
+      size = fifo_buffer_.Size();
+      atomic_signal_fence(std::memory_order_acq_rel);
+    }
+    /* Write any partial blocks left */
+    atomic_signal_fence(std::memory_order_acq_rel);
+    size = fifo_buffer_.Size();
+    atomic_signal_fence(std::memory_order_acq_rel);
+    if (size) {
+      /* Pop data off the FIFO */
+      atomic_signal_fence(std::memory_order_acq_rel);
+      unsigned int bytes_to_write = fifo_buffer_.Read(block_buffer_, BLOCK_DIM_);
+      atomic_signal_fence(std::memory_order_acq_rel);
+      /* Write data */
+      file_.write(block_buffer_, bytes_to_write);
+      file_.sync();
+    }
+    /* Close out the file */
+    file_.close();
   }
 
  private:
-  /* Types */
-  enum Types : uint16_t {
-    TYPE_ACCEL,
-    TYPE_GYRO,
-    TYPE_IMU,
-    TYPE_MAG,
-    TYPE_PRESSURE,
-    TYPE_TEMPERATURE
-  };
   /* SD card */
-  SdFatSdioEX sd_;
+  SdFatSdioEX *sd_;
   /* SD file */
   File file_;
   /* Log extension */

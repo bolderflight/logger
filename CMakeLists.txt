@@ -4,9 +4,9 @@ if (DEFINED MCU)
 	set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/cmake/cortex.cmake")
 endif()
 # Project information
-project(LOGGER
+project(Logger
 	VERSION 1.0
-	DESCRIPTION "Data logger"
+	DESCRIPTION "Generic data logger"
 	LANGUAGES CXX
 )
 if (DEFINED MCU)
