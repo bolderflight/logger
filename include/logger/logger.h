@@ -18,7 +18,7 @@
 template<std::size_t FIFO_DEPTH>
 class Logger {
  public:
-  Logger(SdFatSdioEX *sd) {
+  explicit Logger(SdFatSdioEX *sd) {
     sd_ = sd;
   }
   bool Init(std::string file_name) {
@@ -37,16 +37,16 @@ class Logger {
     }
     return true;
   }
-  unsigned int Write(uint8_t *data, unsigned int bytes) {
+  std::size_t Write(uint8_t *data, std::size_t bytes) {
     /* Push data onto the FIFO */
     atomic_signal_fence(std::memory_order_acq_rel);
-    unsigned int bytes_written = fifo_buffer_.Write(data, bytes);
+    std::size_t bytes_written = fifo_buffer_.Write(data, bytes);
     atomic_signal_fence(std::memory_order_acq_rel);
     return bytes_written;
   }
   void Flush() {
     atomic_signal_fence(std::memory_order_acq_rel);
-    unsigned int size = fifo_buffer_.Size();
+    std::size_t size = fifo_buffer_.Size();
     atomic_signal_fence(std::memory_order_acq_rel);
     if (size >= BLOCK_DIM_) {
       /* Pop data off the FIFO */
@@ -61,7 +61,7 @@ class Logger {
   void Close() {
     /* Write any logs still in the buffer */
     atomic_signal_fence(std::memory_order_acq_rel);
-    unsigned int size = fifo_buffer_.Size();
+    std::size_t size = fifo_buffer_.Size();
     atomic_signal_fence(std::memory_order_acq_rel);
     while (size >= BLOCK_DIM_) {
       Flush();
@@ -76,7 +76,7 @@ class Logger {
     if (size) {
       /* Pop data off the FIFO */
       atomic_signal_fence(std::memory_order_acq_rel);
-      unsigned int bytes_to_write = fifo_buffer_.Read(block_buffer_, BLOCK_DIM_);
+      std::size_t bytes_to_write = fifo_buffer_.Read(block_buffer_, BLOCK_DIM_);
       atomic_signal_fence(std::memory_order_acq_rel);
       /* Write data */
       file_.write(block_buffer_, bytes_to_write);
@@ -94,7 +94,7 @@ class Logger {
   /* Log extension */
   const std::string LOG_EXT_ = ".bfs";
   /* Block dimension */
-  static const unsigned int BLOCK_DIM_ = 512;
+  static const std::size_t BLOCK_DIM_ = 512;
   /* Block buffer */
   uint8_t block_buffer_[BLOCK_DIM_] __attribute__((aligned(4))) = {};
   /* FIFO buffer */

@@ -7,30 +7,42 @@
 
 #include "logger/logger.h"
 
+/* SD object */
 SdFatSdioEX sd;
-
+/* Datalog object, 200 FIFO depth */
 Logger<200> datalog(&sd);
-
-unsigned int counter = 0;
-
+/* Counter to log */
+volatile unsigned int counter = 0;
+/* Data acquisition ISR */
 void daq() {
-  datalog.Write((uint8_t *)&counter, sizeof(counter));
-  counter++;
-  // Serial.println(counter);
+  if (counter < 1000) {
+    datalog.Write((uint8_t *)&counter, sizeof(counter));
+    counter++;
+  }
 }
 
 int main() {
+  /* Start serial for communication */
   Serial.begin(115200);
   while(!Serial){}
-  Serial.println("Begin test v2");
+  Serial.println("Begin test");
+  /* Start SD */
+  sd.begin();
+  /* Init datalog */
   if (!datalog.Init("test_data")) {
     Serial.println("FAILED TO INIT");
-  } else {
-    Serial.println("GOOD INIT");
-  }
+    while(1){}
+  } 
+  /* Create a timer to trigger the ISR */
   IntervalTimer daq_timer;
   daq_timer.begin(daq, 5000);
-  while (1) {
+  /* Run the ISR 1000 times */
+  while (counter < 1000) {
+    /* Write data to SD as a low priority loop (the ISR will have higher priority) */
     datalog.Flush();
   }
+  /* Close the data log after the test */
+  datalog.Close();
+  Serial.println("Done");
+  while(1){}
 }
