@@ -18,10 +18,8 @@
 template<std::size_t FIFO_DEPTH>
 class Logger {
  public:
-  explicit Logger(SdFatSdioEX *sd) {
-    sd_ = sd;
-  }
-  bool Init(std::string file_name) {
+  explicit Logger(SdFatSdioEX *sd) : sd_(sd) {}
+  int Init(std::string file_name) {
     std::size_t counter = 0;
     std::string log_name = file_name + std::to_string(counter) + LOG_EXT_;
     while ((sd_->exists(log_name.c_str())) && (counter < std::numeric_limits<std::size_t>::max())) {
@@ -29,13 +27,13 @@ class Logger {
       log_name = file_name + std::to_string(counter) + LOG_EXT_;
     }
     if (sd_->exists(log_name.c_str())) {
-      return false;
+      return -1;
     }
     file_ = sd_->open(log_name, O_RDWR | O_CREAT);
     if (!file_) {
-      return false;
+      return -1;
     }
-    return true;
+    return counter;
   }
   std::size_t Write(uint8_t *data, std::size_t bytes) {
     /* Push data onto the FIFO */
