@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Logger
-	VERSION 1.0
+	VERSION 1.0.0
 	DESCRIPTION "Generic data logger"
 	LANGUAGES CXX
 )
@@ -37,6 +37,7 @@ if (DEFINED MCU)
 	# Setup include directories 
 	target_include_directories(logger INTERFACE include/)
 endif()
+
 # Example and test if this project is built separately
 if (PROJECT_NAME STREQUAL CMAKE_PROJECT_NAME)
 	if (DEFINED MCU)

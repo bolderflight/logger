@@ -29,7 +29,8 @@ int main() {
   /* Start SD */
   sd.begin();
   /* Init datalog */
-  if (!datalog.Init("test_data")) {
+  int log_num = datalog.Init("test_data");
+  if (log_num < 0) {
     Serial.println("FAILED TO INIT");
     while(1){}
   } 

@@ -39,7 +39,7 @@ SdFatSdioEX sd;
 Logger<200> datalog(&sd);
 ```
 
-**bool Init(std::string file_name)** Initializes the data log given a file name. The .bfs extension is always used and the file name is appended with a number to prevent overwriting existing files. True is returned on succesfully creating and opening the file, otherwise false is returned.
+**int Init(std::string file_name)** Initializes the data log given a file name. The .bfs extension is always used and the file name is appended with a number to prevent overwriting existing files. The log file number is returned on success and a -1 is returned on failure.
 
 ```C++
 bool status = datalog.Init("test_data");
