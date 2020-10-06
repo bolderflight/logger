@@ -96,7 +96,7 @@ class Logger {
   /* Block buffer */
   uint8_t block_buffer_[BLOCK_DIM_] __attribute__((aligned(4))) = {};
   /* FIFO buffer */
-  CircularBuffer<BLOCK_DIM_ * FIFO_DEPTH> fifo_buffer_;
+  CircularBuffer<uint8_t, BLOCK_DIM_ * FIFO_DEPTH> fifo_buffer_;
 };
 
 #endif  // INCLUDE_LOGGER_LOGGER_H_
