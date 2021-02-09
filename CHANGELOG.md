@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.4
+- Updated to support teensy 4.x processors
+- Updated to support core v2.0.1 and circle_buf v1.2.1
+- Switched sources to pull from GitHub
+
 ## v1.0.3
 - Updated CONTRIBUTING
 - Switched from ssh to https for *fetch_content*

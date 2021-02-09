@@ -18,7 +18,7 @@
 template<std::size_t FIFO_DEPTH>
 class Logger {
  public:
-  explicit Logger(SdFatSdioEX *sd) : sd_(sd) {}
+  explicit Logger(SdFat32 *sd) : sd_(sd) {}
   int Init(std::string file_name) {
     std::size_t counter = 0;
     std::string log_name = file_name + std::to_string(counter) + LOG_EXT_;
@@ -86,9 +86,9 @@ class Logger {
 
  private:
   /* SD card */
-  SdFatSdioEX *sd_;
+  SdFat32 *sd_;
   /* SD file */
-  File file_;
+  File32 file_;
   /* Log extension */
   const std::string LOG_EXT_ = ".bfs";
   /* Block dimension */

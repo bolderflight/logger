@@ -8,7 +8,7 @@
 #include "logger/logger.h"
 
 /* SD object */
-SdFatSdioEX sd;
+SdFat32 sd;
 /* Datalog object, 200 FIFO depth */
 Logger<200> datalog(&sd);
 /* Counter to log */
@@ -27,7 +27,7 @@ int main() {
   while(!Serial){}
   Serial.println("Begin test");
   /* Start SD */
-  sd.begin();
+  sd.begin(SdioConfig(FIFO_SDIO));
   /* Init datalog */
   int log_num = datalog.Init("test_data");
   if (log_num < 0) {
