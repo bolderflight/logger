@@ -31,10 +31,10 @@ These are known to work with the same packages used in Teensy products. Also swi
 
 ## Methods
 
-**Logger<FIFO_DEPTH>(SdFatSdioEX &ast;sd)** Creates a Logger object given a pointer to the *SdFatSdioEX* class, which is used to control the SD card. A template parameter is used to specify the FIFO buffer depth. A larger FIFO depth will help prevent missing data logging frames when the SD card experiences latency during write operations. Memory is allocated in 512 byte chunks at the specified depth; for example, if the FIFO depth is set to 200, a total of 102,400 bytes will be allocated.
+**Logger<FIFO_DEPTH>(SdFat32 &ast;sd)** Creates a Logger object given a pointer to the *SdFat32* class, which is used to control the SD card. A template parameter is used to specify the FIFO buffer depth. A larger FIFO depth will help prevent missing data logging frames when the SD card experiences latency during write operations. Memory is allocated in 512 byte chunks at the specified depth; for example, if the FIFO depth is set to 200, a total of 102,400 bytes will be allocated.
 
 ```C++
-SdFatSdioEX sd;
+SdFat32 sd;
 Logger<200> datalog(&sd);
 ```
 
