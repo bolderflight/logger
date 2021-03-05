@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.0
+- Updated namespace to *bfs*
+
 ## v1.0.4
 - Updated to support teensy 4.x processors
 - Updated to support core v2.0.1 and circle_buf v1.2.1

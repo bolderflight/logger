@@ -29,13 +29,16 @@ This will build the library and an example executable called *logger_example*. T
 
 These are known to work with the same packages used in Teensy products. Also switching packages is known to work well, as long as it's only a package change. 
 
+# Namespace
+This library is in namespace *bfs*
+
 ## Methods
 
 **Logger<FIFO_DEPTH>(SdFat32 &ast;sd)** Creates a Logger object given a pointer to the *SdFat32* class, which is used to control the SD card. A template parameter is used to specify the FIFO buffer depth. A larger FIFO depth will help prevent missing data logging frames when the SD card experiences latency during write operations. Memory is allocated in 512 byte chunks at the specified depth; for example, if the FIFO depth is set to 200, a total of 102,400 bytes will be allocated.
 
 ```C++
 SdFat32 sd;
-Logger<200> datalog(&sd);
+bfs::Logger<200> datalog(&sd);
 ```
 
 **int Init(std::string file_name)** Initializes the data log given a file name. The .bfs extension is always used and the file name is appended with a number to prevent overwriting existing files. The log file number is returned on success and a -1 is returned on failure.
