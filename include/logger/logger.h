@@ -42,7 +42,8 @@ class Logger {
   int Init(std::string file_name) {
     std::size_t counter = 0;
     std::string log_name = file_name + std::to_string(counter) + LOG_EXT_;
-    while ((sd_->exists(log_name.c_str())) && (counter < std::numeric_limits<std::size_t>::max())) {
+    while ((sd_->exists(log_name.c_str())) &&
+           (counter < std::numeric_limits<std::size_t>::max())) {
       counter++;
       log_name = file_name + std::to_string(counter) + LOG_EXT_;
     }
