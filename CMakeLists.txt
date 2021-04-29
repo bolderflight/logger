@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Logger
-	VERSION 2.0.0
+	VERSION 2.0.1
 	DESCRIPTION "Generic data logger"
 	LANGUAGES CXX
 )

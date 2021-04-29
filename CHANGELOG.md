@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.1
+- Updated formatting to pass linting
+
 ## v2.0.0
 - Updated namespace to *bfs*
 
