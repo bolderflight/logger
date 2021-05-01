@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Logger
-	VERSION 2.0.2
+	VERSION 2.0.3
 	DESCRIPTION "Generic data logger"
 	LANGUAGES CXX
 )
@@ -18,7 +18,7 @@ if (DEFINED MCU)
 	FetchContent_Declare(
 		sd
 		GIT_REPOSITORY 	https://github.com/bolderflight/sd.git
-		GIT_TAG v2.0.2
+		GIT_TAG v2.0.3
 	)
 	FetchContent_MakeAvailable(sd)
 	# Fetch circular buffer
