@@ -31,7 +31,7 @@
 #include <atomic>
 #include <limits>
 #include "sd/SdFat.h"
-#include "circle_buf/circle_buf.h"
+#include "circle_buf.h"  // NOLINT
 
 namespace bfs {
 
@@ -65,7 +65,7 @@ class Logger {
   }
   void Flush() {
     atomic_signal_fence(std::memory_order_acq_rel);
-    std::size_t size = fifo_buffer_.Size();
+    std::size_t size = fifo_buffer_.size();
     atomic_signal_fence(std::memory_order_acq_rel);
     if (size >= BLOCK_DIM_) {
       /* Pop data off the FIFO */
@@ -80,17 +80,17 @@ class Logger {
   void Close() {
     /* Write any logs still in the buffer */
     atomic_signal_fence(std::memory_order_acq_rel);
-    std::size_t size = fifo_buffer_.Size();
+    std::size_t size = fifo_buffer_.size();
     atomic_signal_fence(std::memory_order_acq_rel);
     while (size >= BLOCK_DIM_) {
       Flush();
       atomic_signal_fence(std::memory_order_acq_rel);
-      size = fifo_buffer_.Size();
+      size = fifo_buffer_.size();
       atomic_signal_fence(std::memory_order_acq_rel);
     }
     /* Write any partial blocks left */
     atomic_signal_fence(std::memory_order_acq_rel);
-    size = fifo_buffer_.Size();
+    size = fifo_buffer_.size();
     atomic_signal_fence(std::memory_order_acq_rel);
     if (size) {
       /* Pop data off the FIFO */
@@ -117,7 +117,7 @@ class Logger {
   /* Block buffer */
   uint8_t block_buffer_[BLOCK_DIM_] __attribute__((aligned(4))) = {};
   /* FIFO buffer */
-  CircularBuffer<uint8_t, BLOCK_DIM_ * FIFO_DEPTH> fifo_buffer_;
+  CircleBuf<uint8_t, BLOCK_DIM_ * FIFO_DEPTH> fifo_buffer_;
 };
 
 }  // namespace bfs

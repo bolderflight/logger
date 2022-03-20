@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.0
+- Updated to support SD v2.1.0
+- Uses MCU support repo for tooling
+
 ## v2.0.3
 - Updated to support SD v2.0.3
 
